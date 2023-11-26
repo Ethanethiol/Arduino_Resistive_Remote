@@ -16,7 +16,6 @@ int STDRELEASE = 2;
 //---}
 
 
-
 //===Команды и коды кнопок руля Astra H (TAKATA-Petri)===
 const int VOL_UP = 100;                         //Правое колесико вверх
 const int VOL_DN = 101;                         //Правое колесико вниз
