@@ -31,17 +31,19 @@ const int LK_DN = 108;                          //Левый пульт нижн
 int getKey() {
 
 //Читаем сопротивление пульта руля в переменную "Key"
-int Key = analogRead(swPin); 
+int Key = analogRead(swPin);
+//Вывод значения в Serial для первичной настройки значений кнопок. При компиляции финальной прошивки закомментить. 
+//Serial.println(Key);
 //---Устанавливаем соответствие считанных сопротивлений кнопкам---
-if (Key >= 68 && Key <= 75) return (VOL_UP);
-if (Key >= 32 && Key <= 40) return (VOL_DN);
-if (Key >= 800 && Key <= 810) return (ARR_UP);
-if (Key >= 810 && Key <= 820) return (ARR_DN);
-if (Key >= 190 && Key <= 230) return (LW_UP);
-if (Key >= 320 && Key <= 350) return (LW_DN);
-if (Key >= 570 && Key <= 600) return (LW_PRESS);
-if (Key >= 120 && Key <= 130) return (LK_UP);
-if (Key >= 900 && Key <= 910) return (LK_DN);
+if (Key >= 220 && Key <= 235) return (VOL_UP);
+if (Key >= 240 && Key <= 255) return (VOL_DN);
+if (Key >= 275 && Key <= 290) return (ARR_UP);
+if (Key >= 350 && Key <= 365) return (ARR_DN);
+if (Key >= 15 && Key <= 35) return (LW_UP);
+if (Key >= 45 && Key <= 60) return (LW_DN);
+if (Key >= 90 && Key <= 105) return (LW_PRESS);
+if (Key >= 165 && Key <= 185) return (LK_UP);
+if (Key >= 310 && Key <= 330) return (LK_DN);
 return (0);
 }
 //<== Конец Функции чтения кодов кнпок руля===
@@ -81,7 +83,7 @@ void loop() {
 
 switch (currButton)
 {
-case VOL_UP
+case VOL_UP:
   pinMode(STDVOL_UP, OUTPUT);
   digitalWrite(STDVOL_UP, LOW);
   Serial.println("VOL_UP");
