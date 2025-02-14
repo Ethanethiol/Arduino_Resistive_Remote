@@ -2,10 +2,10 @@
 
 //===Объявляем константы и переменные===
 const int NUM_READ=196;      //Количество опросов кнопки для фильтра шумов
-const int useLevel=719;    //Уровень сигнала пульта, выше которого считаем все кнопки отпущеными
-const int readDelay=5;    //задержка на устаканивание ШИМ при опросе кнопок
+const int useLevel=680;    //Уровень сигнала пульта, выше которого считаем все кнопки отпущеными
+const int readDelay=0;    //задержка на устаканивание ШИМ при опросе кнопок
 const int keyTolerance=7;  //Допустимое дрожание сигнала при опросе кнопок (принимаем событие нажатия кнопки если два последовательных осредненых считывания отличаются в пределах этой величины)
-const int pushDelay=10;    //Таймаут подтверждения кода кнопки в миллисекундах. Код передается в программу после удержания кнопки в течение /pushDelay/. Можно использовать для обработки комбинаций кнопок (нужно успеть зажать комбинацию в течение pushDelay).
+const int pushDelay=0;    //Таймаут подтверждения кода кнопки в миллисекундах. Код передается в программу после удержания кнопки в течение /pushDelay/. Можно использовать для обработки комбинаций кнопок (нужно успеть зажать комбинацию в течение pushDelay).
 int prevButton=0;          //используем для однозначного определения кода выбранной кнопки в основном цикле
 int mainLevel=1023;        //Уровень сигнала от пульта без нажатия кнопок (для вычислений) 1023 - максимальное значение для АЦП Arduino Nano
 
@@ -53,7 +53,7 @@ while (Key > prevKey+keyTolerance || Key < prevKey-keyTolerance);
 
     if (prevKey > useLevel) {
     mainLevel = prevKey;
-    return (mainLevel);
+    return (mainLevel+200); //это сделано для контроля состояния отпущенных кнопок при настройке значений. "+200" - чтобы вывести значение из диапазона значений для кнопок
   }
  return (mainLevel - prevKey);
 }
@@ -79,7 +79,7 @@ int getKey() {
       if (Key >= 447 && Key <= 477) return (VOL_DN);
       if (Key >= 420 && Key <= 443) return (ARR_UP);
       if (Key >= 250 && Key <= 370) return (ARR_DN);
-      if (Key >= 700 && Key <= 718) return (LW_UP);
+      if (Key >= 693 && Key <= 718) return (LW_UP);
       if (Key >= 650 && Key <= 683) return (LW_DN);
       if (Key >= 610 && Key <= 640) return (LW_PRESS);
       if (Key >= 520 && Key <= 570) return (LK_UP);
@@ -106,7 +106,7 @@ void setup() {
   pinMode(STDARR_RIGHT, INPUT);
   pinMode(STDARR_LEFT, INPUT);
   pinMode(STDRELEASE, INPUT);
-  //Пины управления Bluetooth прижимаем к земле
+  //Пины управления Bluetooth прижимаем к земле. Если используем в схеме преобразователь логических уровней, он без этого будет слать на выход половинный уровень.
   pinMode (BT_PLAY, OUTPUT);
   digitalWrite (BT_PLAY, LOW);
   pinMode (BT_RR, OUTPUT);
@@ -128,18 +128,8 @@ void loop() {
 {
     prevButton = currButton; // сохраняем новое значение в переменную prevButton
 
-switch (currButton)
+switch (currButton) // Выбираем действие, в зависимости от значения currButton
 {
-case VOL_UP:
-  pinMode(STDVOL_UP, OUTPUT); 
-  digitalWrite(STDVOL_UP, LOW);
-  Serial.println("VOL_UP");
-break;
-case VOL_DN:
-  pinMode(STDVOL_DN, OUTPUT);
-  digitalWrite(STDVOL_DN, LOW);
-  Serial.println("VOL_DN");
-break;
 case ARR_UP:
   digitalWrite (BT_FF, HIGH);
   Serial.println("ARR_UP");
@@ -147,6 +137,18 @@ break;
 case ARR_DN:
   digitalWrite (BT_RR, HIGH);
   Serial.println("ARR_DN");
+break;
+case VOL_UP:
+  pinMode(STDVOL_UP, OUTPUT);
+  delay (1);                      //мой клон Arduino Nano, иногда отказывается глючит при операциях с этими пинами. При введении небольшой задержки, это происхоит реже.
+  digitalWrite(STDVOL_UP, LOW);
+  Serial.println("VOL_UP");
+break;
+case VOL_DN:
+  pinMode(STDVOL_DN, OUTPUT);
+  delay (1);
+  digitalWrite(STDVOL_DN, LOW);
+  Serial.println("VOL_DN");
 break;
 case LW_UP:
   pinMode(STDARR_RIGHT, OUTPUT);
@@ -173,8 +175,6 @@ case LK_DN:
   Serial.println("LK_DN");
 break;
 default:
-  delay (30);
-  Serial.println("====");
   pinMode(STDVOL_DN, INPUT);
   pinMode(STDVOL_UP, INPUT);
   pinMode(STDSOURCE, INPUT);
@@ -184,9 +184,10 @@ default:
   digitalWrite (BT_PLAY, LOW);
   digitalWrite (BT_RR, LOW);
   digitalWrite (BT_FF, LOW);
-  break;
+  Serial.println("====");
+  delay (1);
+break;
 }
 }
 }
-  delay(1);  // задержка между опросами кнопок для стабильности
  }
