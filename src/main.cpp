@@ -1,4 +1,6 @@
 #include <Arduino.h> //Подключаем ядро Arduino для PlatformIO. Если вы пользуетесь Arduino IDE, удалите эту строку
+#define debugValue 1 // 1 = вывод в serial значения функции считывания кнопок. Не оставляйте значение пустым
+#define debugKey 1   // 1 = вывод в serial кода считанной кнопки. Не оставляйте значение пустым
 
 //===Объявляем константы и переменные===
 const int NUM_READ=196;      //Количество опросов кнопки для фильтра шумов
@@ -73,7 +75,7 @@ const int LK_DN = 108;                          //Левый пульт нижн
 //===Функция чтения кодов кнпок руля==>
 int getKey() {
     int Key = keyRAW();  //Читаем сопротивление пульта руля в переменную "Key"
-    Serial.println(Key); ////===Вывод значения в Serial для первичной настройки значений кнопок. При компиляции финальной прошивки закомментить=== 
+    if (debugValue==1) Serial.println(Key); 
     //---Устанавливаем соответствие считанных сопротивлений кнопкам---
       if (Key >= 478 && Key <= 500) return (VOL_UP);
       if (Key >= 447 && Key <= 477) return (VOL_DN);
@@ -92,8 +94,10 @@ int getKey() {
 
 
 void setup() {
-  Serial.begin(9600); //Включаем интерфейс последовательного порта для вывода контрольной информации в консоль на компьютер
   
+  if (debugValue==1 || debugKey==1 )
+  Serial.begin(9600); //Включаем интерфейс последовательного порта для вывода контрольной информации в консоль на компьютер
+
   analogReference(INTERNAL);//Опорное напряжение для диапазона сопротивлений до 2,2кОм = 1.1В "INTERNAL", свыше 2,2кОм = 5В "DEFAULT"
   
   //Объявляем пин подключения руля входом. (Для порядку)
@@ -132,47 +136,45 @@ switch (currButton) // Выбираем действие, в зависимос�
 {
 case ARR_UP:
   digitalWrite (BT_FF, HIGH);
-  Serial.println("ARR_UP");
+  if (debugKey == 1) Serial.println("ARR_UP");
 break;
 case ARR_DN:
   digitalWrite (BT_RR, HIGH);
-  Serial.println("ARR_DN");
+  if (debugKey == 1) Serial.println("ARR_DN");
 break;
 case VOL_UP:
   pinMode(STDVOL_UP, OUTPUT);
-  delay (1);                      //мой клон Arduino Nano, иногда отказывается глючит при операциях с этими пинами. При введении небольшой задержки, это происхоит реже.
   digitalWrite(STDVOL_UP, LOW);
-  Serial.println("VOL_UP");
+  if (debugKey == 1) Serial.println("VOL_UP");
 break;
 case VOL_DN:
   pinMode(STDVOL_DN, OUTPUT);
-  delay (1);
   digitalWrite(STDVOL_DN, LOW);
-  Serial.println("VOL_DN");
+  if (debugKey == 1) Serial.println("VOL_DN");
 break;
 case LW_UP:
   pinMode(STDARR_RIGHT, OUTPUT);
   digitalWrite(STDARR_RIGHT, LOW);
-  Serial.println("LW_UP");
+  if (debugKey == 1) Serial.println("LW_UP");
 break;
 case LW_DN:
   pinMode(STDARR_LEFT, OUTPUT);
   digitalWrite(STDARR_LEFT, LOW);
-  Serial.println("LW_DN");
+  if (debugKey == 1) Serial.println("LW_DN");
 break;
 case LW_PRESS:
   pinMode(STDRELEASE, OUTPUT);
   digitalWrite(STDRELEASE, LOW);
-  Serial.println("LW_PRESS");
+  if (debugKey == 1) Serial.println("LW_PRESS");
 break;
 case LK_UP:
   digitalWrite (BT_PLAY, HIGH);
-  Serial.println("LK_UP");
+  if (debugKey == 1) Serial.println("LK_UP");
 break;
 case LK_DN:
   pinMode(STDSOURCE, OUTPUT);
   digitalWrite(STDSOURCE, LOW);
-  Serial.println("LK_DN");
+  if (debugKey == 1) Serial.println("LK_DN");
 break;
 default:
   pinMode(STDVOL_DN, INPUT);
@@ -184,7 +186,7 @@ default:
   digitalWrite (BT_PLAY, LOW);
   digitalWrite (BT_RR, LOW);
   digitalWrite (BT_FF, LOW);
-  Serial.println("====");
+  if (debugKey == 1) Serial.println("====");
   delay (1);
 break;
 }
