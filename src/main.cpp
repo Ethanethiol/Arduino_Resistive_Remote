@@ -3,9 +3,9 @@
 #define debugKey    1   // 1 = вывод в serial кода считанной кнопки. Не оставляйте значение пустым
 
 //===Объявляем константы и переменные===
-const int NUM_READ      = 196;  //Количество опросов кнопки для фильтра шумов
-const int useLevel      = 680;  //Уровень сигнала пульта, выше которого считаем все кнопки отпущеными
-const int readDelay     = 0;    //задержка на устаканивание ШИМ при опросе кнопок
+const int NUM_READ      = 180;  //Количество опросов кнопки для фильтра шумов
+const int useLevel      = 708;  //Уровень сигнала пульта, выше которого считаем все кнопки отпущеными
+const int readDelay     = 3;    //задержка на устаканивание ШИМ при опросе кнопок
 const int keyTolerance  = 7;    //Допустимое дрожание сигнала при опросе кнопок (принимаем событие нажатия кнопки если два последовательных осредненых считывания отличаются в пределах этой величины)
 const int pushDelay     = 0;    //Таймаут подтверждения кода кнопки в миллисекундах. Код передается в программу после удержания кнопки в течение /pushDelay/. Можно использовать для обработки комбинаций кнопок (нужно успеть зажать комбинацию в течение pushDelay).
 int prevButton          = 0;    //используем для однозначного определения кода выбранной кнопки в основном цикле
@@ -75,15 +75,15 @@ int getKey() {
     int Key = keyRAW();  //Читаем сопротивление пульта руля в переменную "Key"
     if (debugValue==1) Serial.println(Key); 
     //---Устанавливаем соответствие считанных сопротивлений кнопкам---
-      if (Key >= 478 && Key <= 500) return (VOL_UP);
-      if (Key >= 447 && Key <= 477) return (VOL_DN);
-      if (Key >= 420 && Key <= 443) return (ARR_UP);
+      if (Key >= 462 && Key <= 500) return (VOL_UP);
+      if (Key >= 440 && Key <= 460) return (VOL_DN);
+      if (Key >= 410 && Key <= 430) return (ARR_UP);
       if (Key >= 250 && Key <= 370) return (ARR_DN);
       if (Key >= 693 && Key <= 718) return (LW_UP);
       if (Key >= 650 && Key <= 683) return (LW_DN);
       if (Key >= 610 && Key <= 640) return (LW_PRESS);
       if (Key >= 520 && Key <= 570) return (LK_UP);
-      if (Key >= 390 && Key <= 410) return (LK_DN);
+      if (Key >= 390 && Key <= 402) return (LK_DN);
       return (0);
 }
 //<== Конец Функции чтения кодов кнопок руля===
@@ -184,9 +184,10 @@ default:
   digitalWrite (BT_RR, LOW);
   digitalWrite (BT_FF, LOW);
   if (debugKey == 1) Serial.println("====");
-  delay (1);
+  
 break;
 }
 }
 }
+delay (3);
  }
