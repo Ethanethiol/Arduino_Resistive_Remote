@@ -3,9 +3,9 @@
 #define debugKey    1   // 1 = вывод в serial кода считанной кнопки. Не оставляйте значение пустым
 
 //===Объявляем константы и переменные===
-const int NUM_READ      = 180;  //Количество опросов кнопки для фильтра шумов
+const int NUM_READ      = 160;  //Количество опросов кнопки для фильтра шумов
 const int useLevel      = 708;  //Уровень сигнала пульта, выше которого считаем все кнопки отпущеными
-const int readDelay     = 3;    //задержка на устаканивание ШИМ при опросе кнопок
+const int readDelay     = 10;    //задержка на устаканивание ШИМ при опросе кнопок
 const int keyTolerance  = 7;    //Допустимое дрожание сигнала при опросе кнопок (принимаем событие нажатия кнопки если два последовательных осредненых считывания отличаются в пределах этой величины)
 const int pushDelay     = 0;    //Таймаут подтверждения кода кнопки в миллисекундах. Код передается в программу после удержания кнопки в течение /pushDelay/. Можно использовать для обработки комбинаций кнопок (нужно успеть зажать комбинацию в течение pushDelay).
 int prevButton          = 0;    //используем для однозначного определения кода выбранной кнопки в основном цикле
@@ -42,7 +42,7 @@ int KeyResistance() {
 // Вызываем KeyResistance(), если значение соответствует отпущенным кнопкам (useLevel) - запоминаем в mainLevel.
 // Если значение меньше порога для отпущенных кнопок, вычитаем значение из mainLevel, т.е. величина паразитного потенциала обнуляется. Правда, значение получается инвертированным. Ну и ладно...
 int keyRAW () {
-  int prevKey = 0; //Объявлем локальную переменную для сравнения последовательных считываний кнопки. 1023 - максимальное значение АЦП Arduino Nano
+  int prevKey = 0; //Объявлем локальную переменную для сравнения последовательных считываний кнопки.
   int Key = KeyResistance();
 
 do { //устраняем дрожание ШИМ от цепи подсветки кнопок. Читаем KeyResistance()дважды, если второе считывание отличается от первого более чем на keyTolerance, читаем снова и сравниваем с предпоследним. И так, пока не совпадет
@@ -75,15 +75,15 @@ int getKey() {
     int Key = keyRAW();  //Читаем сопротивление пульта руля в переменную "Key"
     if (debugValue==1) Serial.println(Key); 
     //---Устанавливаем соответствие считанных сопротивлений кнопкам---
-      if (Key >= 462 && Key <= 500) return (VOL_UP);
-      if (Key >= 440 && Key <= 460) return (VOL_DN);
-      if (Key >= 410 && Key <= 430) return (ARR_UP);
+      if (Key >= 472 && Key <= 500) return (VOL_UP);
+      if (Key >= 445 && Key <= 471) return (VOL_DN);
+      if (Key >= 410 && Key <= 440) return (ARR_UP);
       if (Key >= 250 && Key <= 370) return (ARR_DN);
       if (Key >= 693 && Key <= 718) return (LW_UP);
       if (Key >= 650 && Key <= 683) return (LW_DN);
-      if (Key >= 610 && Key <= 640) return (LW_PRESS);
+      if (Key >= 600 && Key <= 640) return (LW_PRESS);
       if (Key >= 520 && Key <= 570) return (LK_UP);
-      if (Key >= 390 && Key <= 402) return (LK_DN);
+      if (Key >= 385 && Key <= 402) return (LK_DN);
       return (0);
 }
 //<== Конец Функции чтения кодов кнопок руля===
@@ -132,45 +132,48 @@ void loop() {
 switch (currButton) // Выбираем действие, в зависимости от значения currButton
 {
 case ARR_UP:
+  delay(1);
   digitalWrite (BT_FF, HIGH);
   if (debugKey == 1) Serial.println("ARR_UP");
 break;
 case ARR_DN:
+  delay(1);
   digitalWrite (BT_RR, HIGH);
   if (debugKey == 1) Serial.println("ARR_DN");
 break;
 case VOL_UP:
-  pinMode(STDVOL_UP, OUTPUT);
   digitalWrite(STDVOL_UP, LOW);
+  pinMode(STDVOL_UP, OUTPUT); 
   if (debugKey == 1) Serial.println("VOL_UP");
 break;
 case VOL_DN:
-  pinMode(STDVOL_DN, OUTPUT);
   digitalWrite(STDVOL_DN, LOW);
+  pinMode(STDVOL_DN, OUTPUT);
   if (debugKey == 1) Serial.println("VOL_DN");
 break;
 case LW_UP:
-  pinMode(STDARR_RIGHT, OUTPUT);
   digitalWrite(STDARR_RIGHT, LOW);
+  pinMode(STDARR_RIGHT, OUTPUT);
   if (debugKey == 1) Serial.println("LW_UP");
 break;
 case LW_DN:
-  pinMode(STDARR_LEFT, OUTPUT);
   digitalWrite(STDARR_LEFT, LOW);
+  pinMode(STDARR_LEFT, OUTPUT);  
   if (debugKey == 1) Serial.println("LW_DN");
 break;
 case LW_PRESS:
-  pinMode(STDRELEASE, OUTPUT);
   digitalWrite(STDRELEASE, LOW);
+  pinMode(STDRELEASE, OUTPUT);  
   if (debugKey == 1) Serial.println("LW_PRESS");
 break;
 case LK_UP:
+  delay(1);
   digitalWrite (BT_PLAY, HIGH);
   if (debugKey == 1) Serial.println("LK_UP");
 break;
 case LK_DN:
-  pinMode(STDSOURCE, OUTPUT);
   digitalWrite(STDSOURCE, LOW);
+  pinMode(STDSOURCE, OUTPUT);
   if (debugKey == 1) Serial.println("LK_DN");
 break;
 default:
