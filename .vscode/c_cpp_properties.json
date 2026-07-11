@@ -8,7 +8,7 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "C:/Users/Сергей/.vscode/Repo/Arduino_Resistive_Remote/src",
+                "C:/Users/Сергей/Repo/Arduino_Resistive_Remote/src",
                 "C:/.platformio/packages/framework-arduino-avr/cores/arduino",
                 "C:/.platformio/packages/framework-arduino-avr/variants/eightanaloginputs",
                 "C:/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
@@ -21,7 +21,7 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "C:/Users/Сергей/.vscode/Repo/Arduino_Resistive_Remote/src",
+                    "C:/Users/Сергей/Repo/Arduino_Resistive_Remote/src",
                     "C:/.platformio/packages/framework-arduino-avr/cores/arduino",
                     "C:/.platformio/packages/framework-arduino-avr/variants/eightanaloginputs",
                     "C:/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
@@ -33,7 +33,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60118",
+                "PLATFORMIO=60119",
                 "ARDUINO_AVR_NANO",
                 "F_CPU=16000000L",
                 "ARDUINO_ARCH_AVR",
