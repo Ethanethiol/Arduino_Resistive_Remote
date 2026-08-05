@@ -56,7 +56,7 @@ while (Key > prevKey+keyTolerance || Key < prevKey-keyTolerance);
 
     if (prevKey > useLevel) {
     mainLevel = prevKey;
-    return (mainLevel+10000); //это сделано для контроля состояния отпущенных кнопок при настройке значений. "+200" - чтобы вывести значение из диапазона значений для кнопок
+    return (mainLevel+10000); //это сделано для контроля состояния отпущенных кнопок при настройке значений. "+10000" - чтобы вывести значение из диапазона значений для кнопок
   }
  return (mainLevel - prevKey);
 }
