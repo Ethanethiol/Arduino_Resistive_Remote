@@ -32,10 +32,10 @@ int BT_FF = 12; //Пин кпопки Вперед для модуля BT
 
 //--- Функция измерения сопротивления (с фильтром шумов){
 int KeyResistance() {
-  long sum = 0;                       // локальная переменная sum
-  for (int i = 0; i < NUM_READ; i++) { // согласно количеству усреднений
-  // delay (1);                        // задержка в 1мс для снижения влияния помех от ШИМ подсветки
-    sum += analogRead(swPin);         // суммируем измеренные значения
+  long sum = 0;                           // локальная переменная sum
+  for (int i = 0; i < NUM_READ; i++) {    // согласно количеству усреднений
+  // delay (1);                           // задержка в 1мс для снижения влияния помех от ШИМ подсветки
+    sum += analogRead(swPin);             // суммируем измеренные значения
   }
   return ((float)sum / NUM_READ);
 }
@@ -135,11 +135,13 @@ void loop() {
     prevButton = currButton; // сохраняем новое значение в переменную prevButton
 
 switch (currButton) // Выбираем действие, в зависимости от значения currButton
+
+//Что делать при получении кода нажатой кнопки...{
 {
-case ARR_UP:
-  delay(1);
-  digitalWrite (BT_FF, HIGH);
-  if (debugKey == 1) Serial.println("ARR_UP");
+case ARR_UP:                                         //Стрелка вверх
+  delay(1);                                          //Небольшая задержка для стабильности
+  digitalWrite (BT_FF, HIGH);                        //Подаем сигнал выского уровня (+5В) на пин BT_FF
+  if (debugKey == 1) Serial.println("ARR_UP");       //При активном выводе в Serial, передаем в терминал обозначение кнопки
 break;
 case ARR_DN:
   delay(1);
@@ -181,20 +183,21 @@ case LK_DN:
   pinMode(STDSOURCE, OUTPUT);
   if (debugKey == 1) Serial.println("LK_DN");
 break;
-default:
-  pinMode(STDVOL_DN, INPUT);
+default:                                        
+  pinMode(STDVOL_DN, INPUT);                          //Если никакая кнопка не нажата, отрывем пины эмуляции пульта штатного руля от земли через назначение их входами.
   pinMode(STDVOL_UP, INPUT);
   pinMode(STDSOURCE, INPUT);
   pinMode(STDARR_RIGHT, INPUT);
   pinMode(STDARR_LEFT, INPUT);
   pinMode(STDRELEASE, INPUT);
-  digitalWrite (BT_PLAY, LOW);
+  digitalWrite (BT_PLAY, LOW);                        //Если никакая кнопка не нажата, прижимем пины управления Bluetooth к земле для корректной работы преобрахователя уровней.
   digitalWrite (BT_RR, LOW);
-  digitalWrite (BT_FF, LOW);
-  if (debugKey == 1) Serial.println("====");
-  
+  digitalWrite (BT_FF, LOW);        
+  if (debugKey == 1) Serial.println("====");          //Если никакая кнопка не нажата, выводим в терминал "====". При корректной работе, выводится однократно при отпускании кнопки.
 break;
 }
+
+//...}
 }
 }
 delay (3);
