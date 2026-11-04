@@ -1,4 +1,4 @@
-Simple resistive adapter for stearing wheel controls. Opel Astra H to Opel Meriva A
+Simple resistive adapter for steering wheel controls. Opel Astra H to Opel Meriva A
 
 Arduino Nano V3 based
 
